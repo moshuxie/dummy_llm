@@ -1,0 +1,14 @@
+# requirements.txt
+flask
+flask-login
+flask-wtf
+python-dotenv
+langchain
+chromadb
+unstructured
+pypdf
+python-docx
+pandas
+openpyxl
+tiktoken
+requests

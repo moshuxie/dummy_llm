@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="upload-container">
+    <h2>Upload Files</h2>
+    <p>Maximum {{ max_files }} files, each up to {{ (max_file_size/1024/1024)|round(2) }} MB</p>
+    <p>Allowed formats: {{ allowed_extensions|join(', ') }}</p>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="access_level">Confidentiality Level:</label>
+            <select id="access_level" name="access_level">
+                {% for level in access_levels %}
+                    <option value="{{ level }}" 
+                        {% if level == current_level %}selected{% endif %}
+                        {% if not current_user.has_access(level) %}disabled{% endif %}>
+                        {{ level|upper }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="files">Select Files:</label>
+            <input type="file" id="files" name="files" multiple>
+        </div>
+        
+        <button type="submit">Upload</button>
+    </form>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

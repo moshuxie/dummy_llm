@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>Document Assistant</h2>
+        <div class="model-selector">
+            <label>
+                <input type="checkbox" id="use-deepseek"> Use DeepSeek API
+            </label>
+        </div>
+    </div>
+    
+    <div class="chat-history" id="chat-history">
+        <!-- Chat history will be loaded dynamically by JS -->
+    </div>
+    
+    <div class="chat-input">
+        <textarea id="user-input" placeholder="Type your question here..."></textarea>
+        <button id="send-btn">Send</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatHistory = document.getElementById('chat-history');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const useDeepseek = document.getElementById('use-deepseek');
+    
+    function addMessage(sender, message, responseTime = null) {
+        const messageContainer = document.createElement('div');
+        messageContainer.className = `message-container ${sender}`;
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-content';
+        messageDiv.textContent = message;
+        messageContainer.appendChild(messageDiv);
+        
+        if (responseTime && sender === 'ai') {
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'response-time';
+            timeDiv.textContent = `Response time: ${responseTime}`;
+            messageContainer.appendChild(timeDiv);
+        }
+        
+        chatHistory.appendChild(messageContainer);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    
+    sendBtn.addEventListener('click', async function() {
+        const query = userInput.value.trim();
+        if (!query) return;
+        
+        addMessage('user', query);
+        userInput.value = '';
+        
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'query': query,
+                    'use_deepseek': useDeepseek.checked ? 'on' : 'off'
+                })
+            });
+            
+            const data = await response.json();
+            addMessage('ai', data.response, data.response_time);
+        } catch (error) {
+            addMessage('ai', `Request failed: ${error.message}`);
+        }
+    });
+    
+    userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    });
+});
+</script>
+{% endblock %}

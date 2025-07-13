@@ -1,0 +1,20 @@
+{
+  "no_user": {
+    "password": "no_password",
+    "access_level": "low",
+    "created_at": "2023-01-01T00:00:00",
+    "deleted_at": null
+  },
+  "moshu": {
+    "password": "admin123",
+    "access_level": "med",
+    "created_at": "2023-01-01T00:00:00",
+    "deleted_at": null
+  },
+  "root": {
+    "password": "admin123",
+    "access_level": "high",
+    "created_at": "2023-01-01T00:00:00",
+    "deleted_at": null
+  }
+}
